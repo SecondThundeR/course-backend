@@ -25,7 +25,6 @@ export class GqlConfigService implements GqlOptionsFactory {
       includeStacktraceInErrorResponses: graphqlConfig.debug,
       playground: false,
       plugins: [
-        // @ts-expect-error Idk how to fix this cringe with `plugins` type
         graphqlConfig.playgroundEnabled
           ? ApolloServerPluginLandingPageLocalDefault()
           : ApolloServerPluginLandingPageDisabled(),
