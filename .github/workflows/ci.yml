@@ -17,16 +17,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2
-      with:
-        version: 8
+        with:
+          version: 8
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
-      - name: "Install dependencies"
+      - name: 'Install dependencies'
         run: pnpm install
-      - name: "Run ESLint"
+      - name: 'Run ESLint'
         run: pnpm lint
-      - name: "Build project"
+      - name: 'Build project'
         run: pnpm build
