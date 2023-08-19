@@ -20,8 +20,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - run: npm install
-      - run: npm run lint
-      - run: npm run build
-      - run: npm test
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm lint
+      - run: pnpm build
