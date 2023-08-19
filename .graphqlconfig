@@ -1,6 +1,6 @@
 {
   "projects": {
-    "nest-prisma-starter": {
+    "course-backend": {
       "schemaPath": "src/schema.graphql",
       "extensions": {
         "endpoints": {
