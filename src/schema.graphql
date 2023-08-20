@@ -16,9 +16,43 @@ input ChangePasswordInput {
   oldPassword: String!
 }
 
-input CreatePostInput {
+type Conversation {
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  creatorId: String!
+  id: ID!
+  messages: [Message!]!
+  participants: [User!]!
+  title: String
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+type ConversationConnection {
+  edges: [ConversationEdge!]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type ConversationEdge {
+  cursor: String!
+  node: Conversation!
+}
+
+input ConversationOrder {
+  direction: OrderDirection!
+}
+
+input CreateConversationInput {
+  participantsIds: [String!]!
+  title: String
+}
+
+input CreateMessageInput {
   content: String!
-  title: String!
+  conversationId: String!
+  type: MessageType = REGULAR
 }
 
 """
@@ -36,9 +70,46 @@ input LoginInput {
   password: String!
 }
 
+type Message {
+  content: String!
+  contentHistory: [String!]!
+  conversation: Conversation
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  from: User
+  id: ID!
+  type: MessageType!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+type MessageConnection {
+  edges: [MessageEdge!]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type MessageEdge {
+  cursor: String!
+  node: Message!
+}
+
+input MessageOrder {
+  direction: OrderDirection!
+}
+
+"""Type of message"""
+enum MessageType {
+  LATEX
+  REGULAR
+}
+
 type Mutation {
   changePassword(data: ChangePasswordInput!): User!
-  createPost(data: CreatePostInput!): Post!
+  createConversation(data: CreateConversationInput!): Conversation!
+  createMessage(data: CreateMessageInput!): Message!
   login(data: LoginInput!): Auth!
   refreshToken(token: JWT!): Token!
   signup(data: SignupInput!): Auth!
@@ -60,48 +131,14 @@ type PageInfo {
   startCursor: String
 }
 
-type Post {
-  author: User
-  content: String
-
-  """Identifies the date and time when the object was created."""
-  createdAt: DateTime!
-  id: ID!
-  published: Boolean!
-  title: String!
-
-  """Identifies the date and time when the object was last updated."""
-  updatedAt: DateTime!
-}
-
-type PostConnection {
-  edges: [PostEdge!]
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-type PostEdge {
-  cursor: String!
-  node: Post!
-}
-
-input PostOrder {
-  direction: OrderDirection!
-}
-
 type Query {
-  hello(name: String!): String!
-  helloWorld: String!
+  conversation: Conversation!
+  createdConversations(orderBy: ConversationOrder, query: String): ConversationConnection!
+  createdMessages(orderBy: MessageOrder, query: String): MessageConnection!
   me: User!
-  post: Post!
-  publishedPosts(orderBy: PostOrder, query: String): PostConnection!
-  userPosts: [Post!]!
-}
-
-"""User role"""
-enum Role {
-  ADMIN
-  USER
+  message: Message!
+  userConversations: [Conversation!]!
+  userMessages: [Message!]!
 }
 
 input SignupInput {
@@ -112,7 +149,8 @@ input SignupInput {
 }
 
 type Subscription {
-  postCreated: Post!
+  conversationCreated: Conversation!
+  messageCreated: Message!
 }
 
 type Token {
@@ -129,14 +167,15 @@ input UpdateUserInput {
 }
 
 type User {
+  conversations: [Conversation!]!
+
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   email: String!
   firstname: String
   id: ID!
   lastname: String
-  posts: [Post!]
-  role: Role!
+  messages: [Message!]!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: DateTime!
