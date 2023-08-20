@@ -132,13 +132,13 @@ type PageInfo {
 }
 
 type Query {
-  conversation: Conversation!
+  conversation(conversationId: String!): Conversation!
   createdConversations(orderBy: ConversationOrder, query: String): ConversationConnection!
   createdMessages(orderBy: MessageOrder, query: String): MessageConnection!
   me: User!
-  message: Message!
-  userConversations: [Conversation!]!
-  userMessages: [Message!]!
+  message(messageId: String!): Message!
+  userConversations(userId: String!): [Conversation!]!
+  userMessages(userId: String!): [Message!]!
 }
 
 input SignupInput {
