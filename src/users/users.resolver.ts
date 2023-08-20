@@ -24,7 +24,7 @@ export class UsersResolver {
   ) {}
 
   @Query(() => User)
-  async me(@UserEntity() user: User): Promise<User> {
+  async me(@UserEntity() user: User) {
     return user;
   }
 
@@ -50,8 +50,15 @@ export class UsersResolver {
     );
   }
 
-  @ResolveField('posts')
-  posts(@Parent() author: User) {
-    return this.prisma.user.findUnique({ where: { id: author.id } }).posts();
+  @ResolveField('messages')
+  messages(@Parent() user: User) {
+    return this.prisma.user.findUnique({ where: { id: user.id } }).messages();
+  }
+
+  @ResolveField('conversations')
+  conversations(@Parent() user: User) {
+    return this.prisma.user
+      .findUnique({ where: { id: user.id } })
+      .conversations();
   }
 }
