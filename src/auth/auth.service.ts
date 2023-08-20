@@ -33,7 +33,6 @@ export class AuthService {
         data: {
           ...payload,
           password: hashedPassword,
-          role: 'USER',
         },
       });
 
@@ -77,8 +76,15 @@ export class AuthService {
   }
 
   getUserFromToken(token: string): Promise<User> {
-    const id = this.jwtService.decode(token)['userId'];
-    return this.prisma.user.findUnique({ where: { id } });
+    const decodedToken = this.jwtService.decode(token);
+    if (typeof decodedToken === 'string') return null;
+
+    if ('userId' in decodedToken)
+      return this.prisma.user.findUnique({
+        where: { id: decodedToken['userId'] },
+      });
+
+    return null;
   }
 
   generateTokens(payload: { userId: string }): Token {
