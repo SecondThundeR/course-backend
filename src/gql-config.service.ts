@@ -28,21 +28,13 @@ export class GqlConfigService implements GqlOptionsFactory {
         'graphql-ws': {
           onConnect: async (context) => {
             const { connectionParams, extra } = context;
-            if (!connectionParams?.authToken) {
-              console.error('No auth token passed');
-              return false;
-            }
+            if (!connectionParams?.authToken) return false;
 
-            const user = await getUserFromToken(
-              connectionParams.authToken as string,
-            );
-            if (!user) {
-              console.error('Auth token is invalid');
-              return false;
-            }
+            const authToken = connectionParams.authToken as string;
+            const user = await getUserFromToken(authToken);
+            if (!user) return false;
 
             extra['user'] = user;
-            return true;
           },
         },
         'subscriptions-transport-ws': false,
