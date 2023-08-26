@@ -20,7 +20,7 @@ import { UserIdArgs } from './args/user-id.args';
 import { Message } from './models/message.model';
 import { MessageConnection } from './models/message-connection.model';
 import { MessageOrder } from './dto/message-order.input';
-import { CreateMessageInput } from './dto/createMessage.input';
+import { CreateMessageInput } from './dto/create-message.input';
 
 const pubSub = new PubSub();
 
@@ -29,7 +29,7 @@ export class MessagesResolver {
   constructor(private prisma: PrismaService) {}
 
   @Subscription(() => Message, {
-    filter(payload, variables, context) {
+    filter(payload, _, context) {
       if (!context?.req?.extra?.user) return false;
       const userId = context.req.extra.user.id;
       return payload.messageCreated.fromId !== userId;
@@ -60,7 +60,7 @@ export class MessagesResolver {
 
   @UseGuards(GqlAuthGuard)
   @Query(() => MessageConnection)
-  async createdMessages(
+  async messages(
     @Args() { after, before, first, last }: PaginationArgs,
     @Args({ name: 'query', type: () => String, nullable: true })
     query: string,
@@ -111,19 +111,19 @@ export class MessagesResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Query(() => [Message])
-  async userMessages(@Args() id: UserIdArgs) {
-    return await this.prisma.user
-      .findUnique({ where: { id: id.userId } })
-      .messages();
-  }
-
-  @UseGuards(GqlAuthGuard)
   @Query(() => Message)
   async message(@Args() id: MessageIdArgs) {
     return await this.prisma.message.findUnique({
       where: { id: id.messageId },
     });
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Query(() => [Message])
+  async userMessages(@Args() id: UserIdArgs) {
+    return await this.prisma.user
+      .findUnique({ where: { id: id.userId } })
+      .messages();
   }
 
   @ResolveField('from', () => User)

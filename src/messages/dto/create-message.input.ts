@@ -4,7 +4,7 @@ import { MessageType } from '@prisma/client';
 
 @InputType()
 export class CreateMessageInput {
-  @Field()
+  @Field(() => String)
   @IsNotEmpty()
   content: string;
 
@@ -13,7 +13,7 @@ export class CreateMessageInput {
   })
   type?: MessageType = 'REGULAR';
 
-  @Field()
+  @Field(() => String)
   @IsNotEmpty()
   conversationId: string;
 }

@@ -20,7 +20,7 @@ import { UserIdArgs } from './args/user-id.args';
 import { Conversation } from './models/conversation.model';
 import { ConversationConnection } from './models/conversation-connection.model';
 import { ConversationOrder } from './dto/conversation-order.input';
-import { CreateConversationInput } from './dto/createConversation.input';
+import { CreateConversationInput } from './dto/create-conversation.input';
 import { Message } from '../messages/models/message.model';
 
 const pubSub = new PubSub();
@@ -30,7 +30,7 @@ export class ConversationsResolver {
   constructor(private prisma: PrismaService) {}
 
   @Subscription(() => Conversation, {
-    filter(payload, variables, context) {
+    filter(payload, _, context) {
       if (!context?.req?.extra?.user) return false;
       const userId = context.req.extra.user.id;
       return payload.conversationCreated.creatorId !== userId;
@@ -67,7 +67,7 @@ export class ConversationsResolver {
 
   @UseGuards(GqlAuthGuard)
   @Query(() => ConversationConnection)
-  async createdConversations(
+  async conversations(
     @Args() { after, before, first, last }: PaginationArgs,
     @Args({ name: 'query', type: () => String, nullable: true })
     query: string,
@@ -99,19 +99,19 @@ export class ConversationsResolver {
     return cursor;
   }
 
+  @Query(() => Conversation)
+  async conversation(@Args() id: ConversationIdArgs) {
+    return await this.prisma.conversation.findUnique({
+      where: { id: id.conversationId },
+    });
+  }
+
   @UseGuards(GqlAuthGuard)
   @Query(() => [Conversation])
   async userConversations(@Args() id: UserIdArgs) {
     return await this.prisma.user
       .findUnique({ where: { id: id.userId } })
       .conversations();
-  }
-
-  @Query(() => Conversation)
-  async conversation(@Args() id: ConversationIdArgs) {
-    return await this.prisma.conversation.findUnique({
-      where: { id: id.conversationId },
-    });
   }
 
   @ResolveField('participants', () => [User])

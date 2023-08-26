@@ -3,7 +3,7 @@ import { IsNotEmpty } from 'class-validator';
 
 @ArgsType()
 export class ConversationIdArgs {
-  @Field()
+  @Field(() => String)
   @IsNotEmpty()
   conversationId: string;
 }

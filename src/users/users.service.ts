@@ -11,8 +11,8 @@ export class UsersService {
     private passwordService: PasswordService,
   ) {}
 
-  updateUser(userId: string, newUserData: UpdateUserInput) {
-    return this.prisma.user.update({
+  async updateUser(userId: string, newUserData: UpdateUserInput) {
+    return await this.prisma.user.update({
       data: newUserData,
       where: {
         id: userId,
@@ -30,15 +30,13 @@ export class UsersService {
       userPassword,
     );
 
-    if (!passwordValid) {
-      throw new BadRequestException('Invalid password');
-    }
+    if (!passwordValid) throw new BadRequestException('Invalid password');
 
     const hashedPassword = await this.passwordService.hashPassword(
       changePassword.newPassword,
     );
 
-    return this.prisma.user.update({
+    return await this.prisma.user.update({
       data: {
         password: hashedPassword,
       },

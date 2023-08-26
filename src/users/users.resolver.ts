@@ -24,7 +24,7 @@ export class UsersResolver {
   ) {}
 
   @Query(() => User)
-  async me(@UserEntity() user: User) {
+  currentUser(@UserEntity() user: User) {
     return user;
   }
 
@@ -34,7 +34,7 @@ export class UsersResolver {
     @UserEntity() user: User,
     @Args('data') newUserData: UpdateUserInput,
   ) {
-    return this.usersService.updateUser(user.id, newUserData);
+    return await this.usersService.updateUser(user.id, newUserData);
   }
 
   @UseGuards(GqlAuthGuard)
@@ -43,7 +43,7 @@ export class UsersResolver {
     @UserEntity() user: User,
     @Args('data') changePassword: ChangePasswordInput,
   ) {
-    return this.usersService.changePassword(
+    return await this.usersService.changePassword(
       user.id,
       user.password,
       changePassword,
@@ -51,13 +51,15 @@ export class UsersResolver {
   }
 
   @ResolveField('messages')
-  messages(@Parent() user: User) {
-    return this.prisma.user.findUnique({ where: { id: user.id } }).messages();
+  async messages(@Parent() user: User) {
+    return await this.prisma.user
+      .findUnique({ where: { id: user.id } })
+      .messages();
   }
 
   @ResolveField('conversations')
-  conversations(@Parent() user: User) {
-    return this.prisma.user
+  async conversations(@Parent() user: User) {
+    return await this.prisma.user
       .findUnique({ where: { id: user.id } })
       .conversations();
   }

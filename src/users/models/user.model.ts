@@ -7,7 +7,7 @@ import { Message } from '../../messages/models/message.model';
 
 @ObjectType()
 export class User extends BaseModel {
-  @Field()
+  @Field(() => String)
   @IsEmail()
   email: string;
 
