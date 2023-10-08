@@ -6,7 +6,7 @@ Table User {
   id String [pk]
   email String [unique, not null]
   password String [not null]
-  firstname String
+  firstname String [not null]
   lastname String
   messages Message [not null]
   conversations Conversation [not null]
