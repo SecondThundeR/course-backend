@@ -133,10 +133,10 @@ type PageInfo {
 
 type Query {
   conversation(conversationId: String!): Conversation!
-  createdConversations(orderBy: ConversationOrder, query: String): ConversationConnection!
-  createdMessages(orderBy: MessageOrder, query: String): MessageConnection!
-  me: User!
+  conversations(orderBy: ConversationOrder, query: String): ConversationConnection!
+  currentUser: User!
   message(messageId: String!): Message!
+  messages(orderBy: MessageOrder, query: String): MessageConnection!
   userConversations(userId: String!): [Conversation!]!
   userMessages(userId: String!): [Message!]!
 }
