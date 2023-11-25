@@ -133,10 +133,10 @@ type PageInfo {
 
 type Query {
   conversation(conversationId: String!): Conversation!
-  conversations(orderBy: ConversationOrder, query: String): ConversationConnection!
+  conversations(after: String, before: String, first: Int, last: Int, orderBy: ConversationOrder, query: String, skip: Int): ConversationConnection!
   currentUser: User!
   message(messageId: String!): Message!
-  messages(orderBy: MessageOrder, query: String): MessageConnection!
+  messages(after: String, before: String, first: Int, last: Int, orderBy: MessageOrder, query: String, skip: Int): MessageConnection!
   userConversations(userId: String!): [Conversation!]!
   userMessages(userId: String!): [Message!]!
 }
