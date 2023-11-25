@@ -10,9 +10,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
   app.enableShutdownHooks();
-
-  const { httpAdapter } = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
+  app.useGlobalFilters(
+    new PrismaClientExceptionFilter(app.get(HttpAdapterHost).httpAdapter),
+  );
 
   const configService = app.get(ConfigService);
   const nestConfig = configService.get<NestConfig>('nest');

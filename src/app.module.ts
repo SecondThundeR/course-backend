@@ -13,7 +13,6 @@ import { GqlConfigService } from './gql-config.service';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
-
     PrismaModule.forRoot({
       isGlobal: true,
       prismaServiceOptions: {
@@ -25,13 +24,11 @@ import { GqlConfigService } from './gql-config.service';
         ],
       },
     }),
-
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
       useClass: GqlConfigService,
       imports: [AuthModule],
     }),
-
     AuthModule,
     UsersModule,
     MessagesModule,

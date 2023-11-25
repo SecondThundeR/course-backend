@@ -13,10 +13,12 @@ export class GqlConfigService implements GqlOptionsFactory {
     private configService: ConfigService,
     private authService: AuthService,
   ) {}
+
   createGqlOptions(): ApolloDriverConfig {
     const graphqlConfig = this.configService.get<GraphqlConfig>('graphql');
     const getUserFromToken = async (token: string) =>
       await this.authService.getUserFromToken(token);
+
     return {
       autoSchemaFile: graphqlConfig.schemaDestination || './src/schema.graphql',
       sortSchema: graphqlConfig.sortSchema,

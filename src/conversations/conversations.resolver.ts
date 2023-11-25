@@ -85,7 +85,14 @@ export class ConversationsResolver {
           where: {
             title: { contains: query || '' },
           },
-          orderBy: orderBy ? { [orderBy.field]: orderBy.direction } : undefined,
+          orderBy: orderBy
+            ? [
+                { [orderBy.field]: orderBy.direction },
+                {
+                  id: 'desc',
+                },
+              ]
+            : undefined,
           ...args,
         }),
       () =>
