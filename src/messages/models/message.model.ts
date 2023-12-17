@@ -1,9 +1,9 @@
 import { MessageType } from '@prisma/client';
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { User } from '../../users/models/user.model';
-import { BaseModel } from '../../common/models/base.model';
-import { Conversation } from '../../conversations/models/conversation.model';
+import { User } from 'src/users/models/user.model';
+import { BaseModel } from 'src/common/models/base.model';
+import { Conversation } from 'src/conversations/models/conversation.model';
 
 registerEnumType(MessageType, {
   name: 'MessageType',

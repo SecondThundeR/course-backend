@@ -1,13 +1,14 @@
 import { GraphQLModule } from '@nestjs/graphql';
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { PrismaModule, loggingMiddleware } from 'nestjs-prisma';
+
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConversationsModule } from './conversations/conversations.module';
 import { MessagesModule } from './messages/messages.module';
 import config from './common/configs/config';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GqlConfigService } from './gql-config.service';
 
 @Module({

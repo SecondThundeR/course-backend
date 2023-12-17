@@ -8,12 +8,14 @@ import {
   ResolveField,
 } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { UserEntity } from '../common/decorators/user.decorator';
-import { GqlAuthGuard } from '../auth/gql-auth.guard';
-import { UsersService } from './users.service';
-import { User } from './models/user.model';
+
+import { UserEntity } from 'src/common/decorators/user.decorator';
+import { GqlAuthGuard } from 'src/auth/gql-auth.guard';
+
 import { ChangePasswordInput } from './dto/change-password.input';
 import { UpdateUserInput } from './dto/update-user.input';
+import { User } from './models/user.model';
+import { UsersService } from './users.service';
 
 @Resolver(() => User)
 @UseGuards(GqlAuthGuard)

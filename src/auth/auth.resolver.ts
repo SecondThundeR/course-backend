@@ -5,13 +5,15 @@ import {
   Parent,
   ResolveField,
 } from '@nestjs/graphql';
-import { AuthService } from './auth.service';
+
+import { User } from 'src/users/models/user.model';
+
 import { Auth } from './models/auth.model';
 import { Token } from './models/token.model';
 import { LoginInput } from './dto/login.input';
 import { SignupInput } from './dto/signup.input';
 import { RefreshTokenInput } from './dto/refresh-token.input';
-import { User } from '../users/models/user.model';
+import { AuthService } from './auth.service';
 
 @Resolver(() => Auth)
 export class AuthResolver {
