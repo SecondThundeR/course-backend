@@ -10,7 +10,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
-import { SecurityConfig } from 'src/common/configs/config.interface';
+import { SecurityConfig } from '@/common/configs/config.interface';
 
 import { SignupInput } from './dto/signup.input';
 import { Token } from './models/token.model';

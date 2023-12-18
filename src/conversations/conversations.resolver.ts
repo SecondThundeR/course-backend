@@ -12,11 +12,11 @@ import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection
 import { PubSub } from 'graphql-subscriptions';
 import { UseGuards } from '@nestjs/common';
 
-import { PaginationArgs } from 'src/common/pagination/pagination.args';
-import { UserEntity } from 'src/common/decorators/user.decorator';
-import { User } from 'src/users/models/user.model';
-import { Message } from 'src/messages/models/message.model';
-import { GqlAuthGuard } from 'src/auth/gql-auth.guard';
+import { PaginationArgs } from '@/common/pagination/pagination.args';
+import { UserEntity } from '@/common/decorators/user.decorator';
+import { User } from '@/users/models/user.model';
+import { Message } from '@/messages/models/message.model';
+import { GqlAuthGuard } from '@/auth/gql-auth.guard';
 
 import { ConversationIdArgs } from './args/conversation-id.args';
 import { UserIdArgs } from './args/user-id.args';

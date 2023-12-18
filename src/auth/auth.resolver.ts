@@ -6,7 +6,7 @@ import {
   ResolveField,
 } from '@nestjs/graphql';
 
-import { User } from 'src/users/models/user.model';
+import { User } from '@/users/models/user.model';
 
 import { Auth } from './models/auth.model';
 import { Token } from './models/token.model';

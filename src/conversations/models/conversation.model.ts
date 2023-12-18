@@ -1,8 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { User } from 'src/users/models/user.model';
-import { BaseModel } from 'src/common/models/base.model';
-import { Message } from 'src/messages/models/message.model';
+import { User } from '@/users/models/user.model';
+import { BaseModel } from '@/common/models/base.model';
+import { Message } from '@/messages/models/message.model';
 
 @ObjectType()
 export class Conversation extends BaseModel {
