@@ -172,7 +172,7 @@ type User {
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   email: String!
-  firstname: String
+  firstname: String!
   id: ID!
   lastname: String
   messages: [Message!]!

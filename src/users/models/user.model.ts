@@ -15,8 +15,8 @@ export class User extends BaseModel {
   @HideField()
   password: string;
 
-  @Field(() => String, { nullable: true })
-  firstname?: string;
+  @Field(() => String)
+  firstname: string;
 
   @Field(() => String, { nullable: true })
   lastname?: string;
