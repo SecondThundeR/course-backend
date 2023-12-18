@@ -3,9 +3,9 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  await prisma.user.deleteMany();
-  await prisma.message.deleteMany();
   await prisma.conversation.deleteMany();
+  await prisma.message.deleteMany();
+  await prisma.user.deleteMany();
 
   console.log('Seeding...');
 
