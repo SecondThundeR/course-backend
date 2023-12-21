@@ -28,7 +28,6 @@ import { GqlConfigService } from './gql-config.service';
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
       useClass: GqlConfigService,
-      imports: [AuthModule],
     }),
     AuthModule,
     UsersModule,

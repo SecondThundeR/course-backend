@@ -6,19 +6,13 @@ import { Injectable } from '@nestjs/common';
 import { GqlOptionsFactory } from '@nestjs/graphql';
 
 import { GraphqlConfig } from './common/configs/config.interface';
-import { AuthService } from './auth/auth.service';
 
 @Injectable()
 export class GqlConfigService implements GqlOptionsFactory {
-  constructor(
-    private configService: ConfigService,
-    private authService: AuthService,
-  ) {}
+  constructor(private configService: ConfigService) {}
 
   createGqlOptions(): ApolloDriverConfig {
     const graphqlConfig = this.configService.get<GraphqlConfig>('graphql');
-    const getUserFromToken = async (token: string) =>
-      await this.authService.getUserFromToken(token);
 
     return {
       autoSchemaFile: graphqlConfig.schemaDestination || './src/schema.graphql',
@@ -28,18 +22,7 @@ export class GqlConfigService implements GqlOptionsFactory {
       },
       introspection: graphqlConfig.playgroundEnabled,
       subscriptions: {
-        'graphql-ws': {
-          onConnect: async (context) => {
-            const { connectionParams, extra } = context;
-            if (!connectionParams?.authToken) return false;
-
-            const authToken = connectionParams.authToken as string;
-            const user = await getUserFromToken(authToken);
-            if (!user) return false;
-
-            extra['user'] = user;
-          },
-        },
+        'graphql-ws': true,
         'subscriptions-transport-ws': false,
       },
       includeStacktraceInErrorResponses: graphqlConfig.debug,
