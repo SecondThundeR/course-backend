@@ -39,7 +39,6 @@ export class MessagesResolver {
       variables: { userId: string },
     ) => {
       const { userId } = variables;
-      console.log(payload.messageUpdates.message);
       return (
         payload.messageUpdates.message.from.id !== userId &&
         payload.messageUpdates.message.conversation.participants.findIndex(
