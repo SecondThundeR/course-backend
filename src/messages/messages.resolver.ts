@@ -33,8 +33,23 @@ const pubSub = new PubSub();
 export class MessagesResolver {
   constructor(private prisma: PrismaService) {}
 
-  @Subscription(() => MessageSubscription)
-  messageUpdates() {
+  @Subscription(() => MessageSubscription, {
+    filter: (
+      payload: { messageUpdates: MessageSubscription },
+      variables: { userId: string },
+    ) => {
+      const { userId } = variables;
+      console.log(payload.messageUpdates.message);
+      return (
+        payload.messageUpdates.message.from.id !== userId &&
+        payload.messageUpdates.message.conversation.participants.findIndex(
+          (participant) => participant.id === userId,
+        ) !== -1
+      );
+    },
+  })
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  messageUpdates(@Args('userId') userId: string) {
     return pubSub.asyncIterator('messageUpdates');
   }
 
@@ -51,6 +66,18 @@ export class MessagesResolver {
         type,
         fromId: user.id,
         conversationId: conversationId,
+      },
+      include: {
+        from: {
+          select: {
+            id: true,
+          },
+        },
+        conversation: {
+          select: {
+            participants: true,
+          },
+        },
       },
     });
 
@@ -70,6 +97,18 @@ export class MessagesResolver {
       const deletedMessage = await this.prisma.message.delete({
         where: {
           id: id.messageId,
+        },
+        include: {
+          from: {
+            select: {
+              id: true,
+            },
+          },
+          conversation: {
+            select: {
+              participants: true,
+            },
+          },
         },
       });
 

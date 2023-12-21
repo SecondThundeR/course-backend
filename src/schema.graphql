@@ -165,8 +165,8 @@ input SignupInput {
 }
 
 type Subscription {
-  conversationUpdates: ConversationSubscription!
-  messageUpdates: MessageSubscription!
+  conversationUpdates(userId: String!): ConversationSubscription!
+  messageUpdates(userId: String!): MessageSubscription!
 }
 
 type Token {
