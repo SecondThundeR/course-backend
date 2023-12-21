@@ -10,7 +10,7 @@ import {
 } from '@nestjs/graphql';
 import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection';
 import { PubSub } from 'graphql-subscriptions';
-import { UseGuards } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 
 import { PaginationArgs } from '@/common/pagination/pagination.args';
 import { UserEntity } from '@/common/decorators/user.decorator';
@@ -23,6 +23,9 @@ import { MessageOrder } from './dto/message-order.input';
 import { CreateMessageInput } from './dto/create-message.input';
 import { MessageConnection } from './models/message-connection.model';
 import { Message } from './models/message.model';
+import { MessageSubscription } from './models/message-subscription.model';
+import { Conversation } from '@/conversations/models/conversation.model';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 const pubSub = new PubSub();
 
@@ -30,15 +33,9 @@ const pubSub = new PubSub();
 export class MessagesResolver {
   constructor(private prisma: PrismaService) {}
 
-  @Subscription(() => Message, {
-    filter(payload, _, context) {
-      if (!context?.req?.extra?.user) return false;
-      const userId = context.req.extra.user.id;
-      return payload.messageCreated.fromId !== userId;
-    },
-  })
-  messageCreated() {
-    return pubSub.asyncIterator('messageCreated');
+  @Subscription(() => MessageSubscription)
+  messageUpdates() {
+    return pubSub.asyncIterator('messageUpdates');
   }
 
   @UseGuards(GqlAuthGuard)
@@ -52,12 +49,47 @@ export class MessagesResolver {
       data: {
         content,
         type,
-        conversationId,
         fromId: user.id,
+        conversationId: conversationId,
       },
     });
-    await pubSub.publish('messageCreated', { messageCreated: newMessage });
+
+    await pubSub.publish('messageUpdates', {
+      messageUpdates: {
+        type: 'ADDED',
+        message: newMessage,
+      },
+    });
     return newMessage;
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Message)
+  async deleteMessage(@UserEntity() _user: User, @Args() id: MessageIdArgs) {
+    try {
+      const deletedMessage = await this.prisma.message.delete({
+        where: {
+          id: id.messageId,
+        },
+      });
+
+      await pubSub.publish('messageUpdates', {
+        messageUpdates: {
+          type: 'DELETED',
+          message: deletedMessage,
+        },
+      });
+
+      return deletedMessage;
+    } catch (error: unknown) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new BadRequestException(
+            'Failed to delete message for provided ID',
+          );
+        }
+      }
+    }
   }
 
   @UseGuards(GqlAuthGuard)
@@ -140,5 +172,12 @@ export class MessagesResolver {
     return await this.prisma.message
       .findUnique({ where: { id: message.id } })
       .from();
+  }
+
+  @ResolveField('conversation', () => Conversation)
+  async conversation(@Parent() message: Message) {
+    return await this.prisma.message
+      .findUnique({ where: { id: message.id } })
+      .conversation();
   }
 }

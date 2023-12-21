@@ -10,7 +10,7 @@ import {
 } from '@nestjs/graphql';
 import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection';
 import { PubSub } from 'graphql-subscriptions';
-import { UseGuards } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 
 import { PaginationArgs } from '@/common/pagination/pagination.args';
 import { UserEntity } from '@/common/decorators/user.decorator';
@@ -24,6 +24,9 @@ import { ConversationOrder } from './dto/conversation-order.input';
 import { CreateConversationInput } from './dto/create-conversation.input';
 import { ConversationConnection } from './models/conversation-connection.model';
 import { Conversation } from './models/conversation.model';
+import { DeleteConversationInput } from './dto/delete-conversation.input';
+import { ConversationSubscription } from './models/conversation-subscription.model';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 const pubSub = new PubSub();
 
@@ -31,15 +34,9 @@ const pubSub = new PubSub();
 export class ConversationsResolver {
   constructor(private prisma: PrismaService) {}
 
-  @Subscription(() => Conversation, {
-    filter(payload, _, context) {
-      if (!context?.req?.extra?.user) return false;
-      const userId = context.req.extra.user.id;
-      return payload.conversationCreated.creatorId !== userId;
-    },
-  })
-  conversationCreated() {
-    return pubSub.asyncIterator('conversationCreated');
+  @Subscription(() => ConversationSubscription)
+  conversationUpdates() {
+    return pubSub.asyncIterator('conversationUpdates');
   }
 
   @UseGuards(GqlAuthGuard)
@@ -61,10 +58,45 @@ export class ConversationsResolver {
         creatorId: user.id,
       },
     });
-    await pubSub.publish('conversationCreated', {
-      conversationCreated: newConversation,
+    await pubSub.publish('conversationUpdates', {
+      conversationUpdates: {
+        type: 'ADDED',
+        conversation: newConversation,
+      },
     });
     return newConversation;
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Conversation)
+  async deleteConversation(
+    @UserEntity() _user: User,
+    @Args('data') data: DeleteConversationInput,
+  ) {
+    const { conversationId } = data;
+    try {
+      const deletedConversation = await this.prisma.conversation.delete({
+        where: {
+          id: conversationId,
+        },
+      });
+
+      await pubSub.publish('conversationUpdates', {
+        conversationUpdates: {
+          type: 'DELETED',
+          conversation: deletedConversation,
+        },
+      });
+      return deletedConversation;
+    } catch (error: unknown) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new BadRequestException(
+            'Failed to delete conversation for provided ID',
+          );
+        }
+      }
+    }
   }
 
   @UseGuards(GqlAuthGuard)

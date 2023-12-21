@@ -44,6 +44,11 @@ input ConversationOrder {
   direction: OrderDirection!
 }
 
+type ConversationSubscription {
+  conversation: Conversation!
+  type: UpdateType!
+}
+
 input CreateConversationInput {
   participantsIds: [String!]!
   title: String
@@ -59,6 +64,10 @@ input CreateMessageInput {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+input DeleteConversationInput {
+  conversationId: String!
+}
 
 """
 A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction.
@@ -100,6 +109,11 @@ input MessageOrder {
   direction: OrderDirection!
 }
 
+type MessageSubscription {
+  message: Message!
+  type: UpdateType!
+}
+
 """Type of message"""
 enum MessageType {
   LATEX
@@ -110,6 +124,8 @@ type Mutation {
   changePassword(data: ChangePasswordInput!): User!
   createConversation(data: CreateConversationInput!): Conversation!
   createMessage(data: CreateMessageInput!): Message!
+  deleteConversation(data: DeleteConversationInput!): Conversation!
+  deleteMessage(messageId: String!): Message!
   login(data: LoginInput!): Auth!
   refreshToken(token: JWT!): Token!
   signup(data: SignupInput!): Auth!
@@ -149,8 +165,8 @@ input SignupInput {
 }
 
 type Subscription {
-  conversationCreated: Conversation!
-  messageCreated: Message!
+  conversationUpdates: ConversationSubscription!
+  messageUpdates: MessageSubscription!
 }
 
 type Token {
@@ -159,6 +175,11 @@ type Token {
 
   """JWT refresh token"""
   refreshToken: JWT!
+}
+
+enum UpdateType {
+  ADDED
+  DELETED
 }
 
 input UpdateUserInput {
