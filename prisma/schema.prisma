@@ -38,6 +38,7 @@ model Message {
   content        String
   contentHistory String[]
   type           MessageType   @default(REGULAR)
+  isDeleted      Boolean       @default(false)
   from           User          @relation(fields: [fromId], references: [id])
   fromId         String
   conversation   Conversation? @relation(fields: [conversationId], references: [id])

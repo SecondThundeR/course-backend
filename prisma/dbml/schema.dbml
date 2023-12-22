@@ -29,6 +29,7 @@ Table Message {
   content String [not null]
   contentHistory String[] [not null]
   type MessageType [not null, default: 'REGULAR']
+  isDeleted Boolean [not null, default: false]
   from User [not null]
   fromId String [not null]
   conversation Conversation
