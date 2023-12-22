@@ -93,9 +93,13 @@ export class MessagesResolver {
   @Mutation(() => Message)
   async deleteMessage(@UserEntity() _user: User, @Args() id: MessageIdArgs) {
     try {
-      const deletedMessage = await this.prisma.message.delete({
+      const deletedMessage = await this.prisma.message.update({
         where: {
           id: id.messageId,
+          isDeleted: false,
+        },
+        data: {
+          isDeleted: true,
         },
         include: {
           from: {
@@ -148,6 +152,7 @@ export class MessagesResolver {
         this.prisma.message.findMany({
           include: { from: true },
           where: {
+            isDeleted: false,
             OR: [
               {
                 content: { contains: query || '' },
@@ -172,6 +177,7 @@ export class MessagesResolver {
       async () =>
         await this.prisma.message.count({
           where: {
+            isDeleted: false,
             OR: [
               {
                 content: { contains: query || '' },
@@ -192,17 +198,20 @@ export class MessagesResolver {
   @UseGuards(GqlAuthGuard)
   @Query(() => Message)
   async message(@Args() id: MessageIdArgs) {
-    return await this.prisma.message.findUnique({
-      where: { id: id.messageId },
+    return await this.prisma.message.findUniqueOrThrow({
+      where: { id: id.messageId, isDeleted: false },
     });
   }
 
   @UseGuards(GqlAuthGuard)
   @Query(() => [Message])
   async userMessages(@Args() id: UserIdArgs) {
-    return await this.prisma.user
-      .findUnique({ where: { id: id.userId } })
-      .messages();
+    return await this.prisma.message.findMany({
+      where: {
+        fromId: id.userId,
+        isDeleted: false,
+      },
+    });
   }
 
   @ResolveField('from', () => User)

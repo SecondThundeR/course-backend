@@ -54,9 +54,12 @@ export class UsersResolver {
 
   @ResolveField('messages')
   async messages(@Parent() user: User) {
-    return await this.prisma.user
-      .findUnique({ where: { id: user.id } })
-      .messages();
+    return await this.prisma.message.findMany({
+      where: {
+        fromId: user.id,
+        isDeleted: false,
+      },
+    });
   }
 
   @ResolveField('conversations')
