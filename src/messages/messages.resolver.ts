@@ -211,6 +211,11 @@ export class MessagesResolver {
         fromId: id.userId,
         isDeleted: false,
       },
+      orderBy: [
+        {
+          createdAt: 'asc',
+        },
+      ],
     });
   }
 

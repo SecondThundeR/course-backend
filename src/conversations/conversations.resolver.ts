@@ -189,6 +189,11 @@ export class ConversationsResolver {
         conversationId: conversation.id,
         isDeleted: false,
       },
+      orderBy: [
+        {
+          createdAt: 'asc',
+        },
+      ],
     });
   }
 }
