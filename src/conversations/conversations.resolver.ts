@@ -59,15 +59,26 @@ export class ConversationsResolver {
     @UserEntity() user: User,
     @Args('data') data: CreateConversationInput,
   ) {
-    const { title, participantsIds } = data;
+    const { title, participantsEmails, initialMessage, isLatex } = data;
+    const participants = await this.prisma.user.findMany({
+      where: {
+        email: {
+          in: participantsEmails,
+        },
+      },
+    });
     const newConversation = await this.prisma.conversation.create({
       data: {
         title,
         participants: {
-          connect: [
-            { id: user.id },
-            ...participantsIds.map((userId) => ({ id: userId })),
-          ],
+          connect: [{ id: user.id }, ...participants],
+        },
+        messages: {
+          create: {
+            content: initialMessage,
+            fromId: user.id,
+            type: isLatex ?? false ? 'LATEX' : 'REGULAR',
+          },
         },
         creatorId: user.id,
       },

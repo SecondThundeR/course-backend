@@ -50,7 +50,9 @@ type ConversationSubscription {
 }
 
 input CreateConversationInput {
-  participantsIds: [String!]!
+  initialMessage: String!
+  isLatex: Boolean
+  participantsEmails: [String!]!
   title: String
 }
 

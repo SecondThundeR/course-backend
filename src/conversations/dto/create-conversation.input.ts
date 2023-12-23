@@ -8,5 +8,12 @@ export class CreateConversationInput {
 
   @Field(() => [String])
   @IsNotEmpty()
-  participantsIds: string[];
+  participantsEmails: string[];
+
+  @Field(() => String)
+  @IsNotEmpty()
+  initialMessage: string;
+
+  @Field(() => Boolean, { nullable: true })
+  isLatex?: boolean | null;
 }
