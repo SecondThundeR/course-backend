@@ -49,6 +49,15 @@ async function main() {
             content: 'Hello!',
             fromId: user2.id,
           },
+          {
+            content: 'Check this out!',
+            fromId: user2.id,
+          },
+          {
+            content: '\\int_0^\\infty x^2 dx',
+            fromId: user2.id,
+            type: 'LATEX',
+          },
         ],
       },
     },
