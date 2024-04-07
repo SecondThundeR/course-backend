@@ -71,6 +71,12 @@ input DeleteConversationInput {
   conversationId: String!
 }
 
+input EditMessageInput {
+  content: String!
+  conversationId: String!
+  messageId: String!
+}
+
 """
 A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction.
 """
@@ -128,6 +134,7 @@ type Mutation {
   createMessage(data: CreateMessageInput!): Message!
   deleteConversation(data: DeleteConversationInput!): Conversation!
   deleteMessage(messageId: String!): Message!
+  editMessage(data: EditMessageInput!): Message!
   login(data: LoginInput!): Auth!
   refreshToken(token: JWT!): Token!
   signup(data: SignupInput!): Auth!

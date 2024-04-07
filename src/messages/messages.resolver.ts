@@ -10,7 +10,12 @@ import {
 } from '@nestjs/graphql';
 import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection';
 import { PubSub } from 'graphql-subscriptions';
-import { BadRequestException, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+  NotFoundException,
+  UseGuards,
+} from '@nestjs/common';
 
 import { PaginationArgs } from '@/common/pagination/pagination.args';
 import { UserEntity } from '@/common/decorators/user.decorator';
@@ -26,6 +31,7 @@ import { Message } from './models/message.model';
 import { MessageSubscription } from './models/message-subscription.model';
 import { Conversation } from '@/conversations/models/conversation.model';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { EditMessageInput } from './dto/edit-message.input';
 
 const pubSub = new PubSub();
 
@@ -87,6 +93,74 @@ export class MessagesResolver {
       },
     });
     return newMessage;
+  }
+
+  /**
+   * @description Message type cannot be edited intentionally,
+   * because there is a chance that user can mixup type and content
+   * and send LaTeX as regular message or vice versa
+   */
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Message)
+  async editMessage(
+    @UserEntity() user: User,
+    @Args('data') data: EditMessageInput,
+  ) {
+    try {
+      const { content, conversationId, messageId } = data;
+      const updatedMessage = await this.prisma.message.update({
+        data: {
+          content,
+        },
+        where: {
+          id: messageId,
+          conversationId,
+          fromId: user.id,
+          isDeleted: false,
+          createdAt: {
+            gte: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
+          },
+        },
+        include: {
+          from: {
+            select: {
+              id: true,
+            },
+          },
+          conversation: {
+            select: {
+              participants: true,
+            },
+          },
+        },
+      });
+
+      if (!updatedMessage) {
+        throw new NotFoundException('Message not found');
+      }
+
+      await pubSub.publish('messageUpdates', {
+        messageUpdates: {
+          type: 'CHANGED',
+          message: updatedMessage,
+        },
+      });
+
+      return updatedMessage;
+    } catch (error: unknown) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new BadRequestException(
+            'Failed to update message for provided ID',
+          );
+        }
+        throw new InternalServerErrorException(
+          'Something went wrong when updating message',
+        );
+      }
+
+      throw error;
+    }
   }
 
   @UseGuards(GqlAuthGuard)
