@@ -68,6 +68,9 @@ export class MessagesResolver {
     const newMessage = await this.prisma.message.create({
       data: {
         content,
+        contentHistory: {
+          set: [content],
+        },
         type,
         fromId: user.id,
         conversationId: conversationId,
@@ -111,6 +114,9 @@ export class MessagesResolver {
       const updatedMessage = await this.prisma.message.update({
         data: {
           content,
+          contentHistory: {
+            push: content,
+          },
         },
         where: {
           id: messageId,
