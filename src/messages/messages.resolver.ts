@@ -32,6 +32,7 @@ import { MessageSubscription } from './models/message-subscription.model';
 import { Conversation } from '@/conversations/models/conversation.model';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { EditMessageInput } from './dto/edit-message.input';
+import { UpdateType } from '@/common/subscription/update-type';
 
 const pubSub = new PubSub();
 
@@ -91,7 +92,7 @@ export class MessagesResolver {
 
     await pubSub.publish('messageUpdates', {
       messageUpdates: {
-        type: 'ADDED',
+        type: UpdateType.ADDED,
         message: newMessage,
       },
     });
@@ -147,7 +148,7 @@ export class MessagesResolver {
 
       await pubSub.publish('messageUpdates', {
         messageUpdates: {
-          type: 'CHANGED',
+          type: UpdateType.EDITED,
           message: updatedMessage,
         },
       });
@@ -197,7 +198,7 @@ export class MessagesResolver {
 
       await pubSub.publish('messageUpdates', {
         messageUpdates: {
-          type: 'DELETED',
+          type: UpdateType.DELETED,
           message: deletedMessage,
         },
       });

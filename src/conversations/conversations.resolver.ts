@@ -27,6 +27,7 @@ import { Conversation } from './models/conversation.model';
 import { DeleteConversationInput } from './dto/delete-conversation.input';
 import { ConversationSubscription } from './models/conversation-subscription.model';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { UpdateType } from '@/common/subscription/update-type';
 
 const pubSub = new PubSub();
 
@@ -88,7 +89,7 @@ export class ConversationsResolver {
     });
     await pubSub.publish('conversationUpdates', {
       conversationUpdates: {
-        type: 'ADDED',
+        type: UpdateType.ADDED,
         conversation: newConversation,
       },
     });
@@ -114,7 +115,7 @@ export class ConversationsResolver {
 
       await pubSub.publish('conversationUpdates', {
         conversationUpdates: {
-          type: 'DELETED',
+          type: UpdateType.DELETED,
           conversation: deletedConversation,
         },
       });
