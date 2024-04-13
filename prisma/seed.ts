@@ -43,18 +43,22 @@ async function main() {
         create: [
           {
             content: 'Hi!',
+            contentHistory: ['Hi!'],
             fromId: user1.id,
           },
           {
             content: 'Hello!',
+            contentHistory: ['Hello!'],
             fromId: user2.id,
           },
           {
             content: 'Check this out!',
+            contentHistory: ['Check this out!'],
             fromId: user2.id,
           },
           {
             content: '\\int_0^\\infty x^2 dx',
+            contentHistory: ['\\int_0^\\infty x^2 dx'],
             fromId: user2.id,
             type: 'LATEX',
           },
