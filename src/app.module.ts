@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConversationsModule } from './conversations/conversations.module';
 import { MessagesModule } from './messages/messages.module';
+import { AnonymousMessagesModule } from './anonymous-messages/anonymous-messages.module';
 import config from './common/configs/config';
 import { GqlConfigService } from './gql-config.service';
 
@@ -32,6 +33,7 @@ import { GqlConfigService } from './gql-config.service';
     AuthModule,
     UsersModule,
     MessagesModule,
+    AnonymousMessagesModule,
     ConversationsModule,
   ],
   controllers: [],

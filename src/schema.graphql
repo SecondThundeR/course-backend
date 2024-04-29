@@ -2,6 +2,24 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AnonymousMessage {
+  content: String!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+  fromId: String!
+  id: ID!
+  type: MessageType!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+}
+
+type AnonymousMessageSubscription {
+  message: AnonymousMessage!
+  type: UpdateType!
+}
+
 type Auth {
   """JWT access token"""
   accessToken: JWT!
@@ -47,6 +65,12 @@ input ConversationOrder {
 type ConversationSubscription {
   conversation: Conversation!
   type: UpdateType!
+}
+
+input CreateAnonymousMessageInput {
+  content: String!
+  fromId: String!
+  type: MessageType = REGULAR
 }
 
 input CreateConversationInput {
@@ -130,6 +154,7 @@ enum MessageType {
 
 type Mutation {
   changePassword(data: ChangePasswordInput!): User!
+  createAnonymousMessage(data: CreateAnonymousMessageInput!): AnonymousMessage!
   createConversation(data: CreateConversationInput!): Conversation!
   createMessage(data: CreateMessageInput!): Message!
   deleteConversation(data: DeleteConversationInput!): Conversation!
@@ -157,6 +182,8 @@ type PageInfo {
 }
 
 type Query {
+  anonymousMessages(after: String, before: String, first: Int, last: Int, orderBy: MessageOrder, query: String, skip: Int): MessageConnection!
+  assignRandomUsername: String!
   conversation(conversationId: String!): Conversation!
   conversations(after: String, before: String, first: Int, last: Int, orderBy: ConversationOrder, query: String, skip: Int): ConversationConnection!
   currentUser: User!
@@ -174,6 +201,7 @@ input SignupInput {
 }
 
 type Subscription {
+  anonymousMessageUpdates: AnonymousMessageSubscription!
   conversationUpdates(userId: String!): ConversationSubscription!
   messageUpdates(userId: String!): MessageSubscription!
 }

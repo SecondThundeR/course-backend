@@ -47,6 +47,20 @@ model Message {
   updatedAt      DateTime      @updatedAt
 }
 
+// Stripped down version of Message model for
+// new "anonymous" chat feature
+//
+// Actually, not so anonymous, rather it is just regular chat
+// with dynamic assignment of usernames on enter
+model AnonymousMessage {
+  id        String      @id @default(cuid())
+  content   String
+  type      MessageType @default(REGULAR)
+  fromId    String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
 enum MessageType {
   REGULAR
   LATEX
