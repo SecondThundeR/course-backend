@@ -1,18 +1,19 @@
-import { faker } from '@faker-js/faker';
+import { BadRequestException } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { Resolver, Query, Args, Subscription, Mutation } from '@nestjs/graphql';
 import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection';
 import { PubSub } from 'graphql-subscriptions';
+import { faker } from '@faker-js/faker';
 
 import { PaginationArgs } from '@/common/pagination/pagination.args';
-
 import { UpdateType } from '@/common/subscription/update-type';
-import { MessageConnection } from '@/messages/models/message-connection.model';
-import { AnonymousMessage } from './models/anonymous-message.model';
+
 import { MessageOrder } from '@/messages/dto/message-order.input';
+import { MessageConnection } from '@/messages/models/message-connection.model';
+
 import { CreateAnonymousMessageInput } from './dto/create-anonymous-message.input';
 import { AnonymousMessageSubscription } from './models/anonymous-message-subscription.model';
-import { BadRequestException } from '@nestjs/common';
+import { AnonymousMessage } from './models/anonymous-message.model';
 
 const pubSub = new PubSub();
 

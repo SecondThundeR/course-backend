@@ -1,7 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { IsNotEmpty } from 'class-validator';
 
 import { UpdateType } from '@/common/subscription/update-type';
-import { IsNotEmpty } from 'class-validator';
+
 import { AnonymousMessage } from './anonymous-message.model';
 
 @ObjectType()
