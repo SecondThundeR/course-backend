@@ -30,7 +30,9 @@ export class AnonymousMessagesResolver {
   constructor(private prisma: PrismaService) {}
 
   // There is no need to filter, as anonymous chat is basically one shared chat room
-  @Subscription(() => AnonymousMessageSubscription)
+  @Subscription(() => AnonymousMessageSubscription, {
+    name: 'anonymousMessageUpdates',
+  })
   anonymousMessageUpdates() {
     return pubSub.asyncIterator('anonymousMessageUpdates');
   }
@@ -77,7 +79,7 @@ export class AnonymousMessagesResolver {
     });
 
     await pubSub.publish('anonymousMessageUpdates', {
-      messageUpdates: {
+      anonymousMessageUpdates: {
         type: UpdateType.ADDED,
         message: newMessage,
       },
