@@ -58,7 +58,6 @@ model AnonymousMessage {
   type      MessageType @default(REGULAR)
   fromId    String
   createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
 }
 
 enum MessageType {

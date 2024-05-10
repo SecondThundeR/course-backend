@@ -42,18 +42,18 @@ async function main() {
       messages: {
         create: [
           {
-            content: 'Hi!',
-            contentHistory: ['Hi!'],
+            content: 'Хей!',
+            contentHistory: ['Хей!'],
             fromId: user1.id,
           },
           {
-            content: 'Hello!',
-            contentHistory: ['Hello!'],
+            content: 'Привет!',
+            contentHistory: ['Привет!'],
             fromId: user2.id,
           },
           {
-            content: 'Check this out!',
-            contentHistory: ['Check this out!'],
+            content: 'Как тебе такое?',
+            contentHistory: ['Как тебе такое?'],
             fromId: user2.id,
           },
           {
@@ -61,6 +61,11 @@ async function main() {
             contentHistory: ['\\int_0^\\infty x^2 dx'],
             fromId: user2.id,
             type: 'LATEX',
+          },
+          {
+            content: 'Ого, класс',
+            contentHistory: ['Ого, класс'],
+            fromId: user1.id,
           },
         ],
       },
