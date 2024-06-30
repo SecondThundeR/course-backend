@@ -1,3 +1,8 @@
+> [!NOTE]
+> Work on this project is ended and repo has been archived
+>
+> Feel free to fork this and use for your own things
+
 # Project Prometheus (Backend Part)
 
 > Based on [nestjs-prisma-starter](https://github.com/notiz-dev/nestjs-prisma-starter)
